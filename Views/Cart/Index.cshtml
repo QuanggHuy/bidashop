@@ -1,0 +1,127 @@
+﻿@model Authentication.Helper.Cart
+
+@{
+    ViewData["Title"] = "Your Cart";
+}
+
+<style>
+    /* Custom Styles for Cart Page */
+    h1.text-center.mb-4 {
+        font-family: 'Arial', sans-serif;
+        color: #2c3e50;
+        font-weight: bold;
+    }
+
+    .table thead th {
+        background-color: #f8f9fa;
+        color: #343a40;
+        font-weight: bold;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    .table tbody td {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .table tfoot th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+        font-size: 16px;
+        color: #343a40;
+    }
+
+    .table td img {
+        border-radius: 8px;
+    }
+
+    .table .text-right {
+        text-align: right;
+    }
+
+    .btn-primary.update {
+        background-color: #3498db;
+        border-color: #2980b9;
+        font-weight: bold;
+    }
+
+        .btn-primary.update:hover {
+            background-color: #2980b9;
+            border-color: #1c6ea4;
+        }
+
+    .btn-danger {
+        font-weight: bold;
+    }
+</style>
+
+<h1 class="text-center mb-4">@ViewData["Title"]</h1>
+
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead class="thead-light">
+            <tr>
+                <th>No.</th>
+                <th>ID</th>
+                <th>Image</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th class="text-right">Quantity</th>
+                <th class="text-right">Old Price</th>
+                <th class="text-right">Discount</th>
+                <th class="text-right">New Price</th>
+                <th class="text-right">Amount</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int count = 0;
+            }
+            @foreach (var item in Model.List.Values)
+            {
+                <tr>
+                    <td>@(++count)</td>
+                    <td>@item.Id</td>
+                    <td><img src="~/bida/@(item.Id).jpg" class="img-fluid" width="150px"></td>
+                    <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Category)</td>
+                    <td class="text-right">
+                        <input type="number" min="1" id="quantity-@item.Id" value="@item.Quantity" class="form-control w-75 mx-auto" />
+                    </td>
+                    <td class="text-right">@item.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</td>
+                    <td class="text-right">@item.Discount.ToString("P")</td>
+                    <td class="text-right">@item.NewPrice.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</td>
+                    <td class="text-right">@item.Amount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</td>
+                    <td>
+                        <button class="btn btn-primary update" data-id="@item.Id">Update</button>
+                        <a class="btn btn-danger" asp-action="Remove" asp-route-id="@item.Id">Remove</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="9" class="text-right">Total:</th>
+                <th class="text-right">@Model.TotalAmount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</th>
+                <th>
+                    <a asp-action="Empty" class="btn btn-danger">Empty</a>
+                </th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".update").click(function () {
+                var id = $(this).data("id");
+                var quantity = $("#quantity-" + id).val();
+                var url = `@Url.Action("Update", "Cart")/${id}?quantity=${quantity}`;
+                window.location.href = url;
+            });
+        });
+    </script>
+}

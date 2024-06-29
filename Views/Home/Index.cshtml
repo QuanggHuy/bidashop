@@ -1,0 +1,79 @@
+﻿@using Authentication.Helper
+@model PaginatedList<Product>
+
+@{
+    ViewData["Title"] = "Products";
+}
+
+<div class="container">
+    <h2 class="my-4">Products</h2>
+    <div class="row">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="float-sm-end" style="margin-bottom: 10px">
+                    <a href="#" class="btn btn-outline-light text-dark" data-bs-toggle="modal"
+                       data-bs-target="#modalSearching" title="Searching Bicycles">
+                        <i class="bi bi-search"></i> Search
+                    </a>
+                    <a href="#" class="btn btn-outline-light text-dark" data-bs-toggle="modal"
+                       data-bs-target="#modalSorting" title="Sorting Bicycles">
+                        <i class="bi bi-arrow-down-up"></i> Sort
+                    </a>
+                </div>
+            </div>
+        </div>
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100">
+                    <img src="~/bida/@(item.Id).jpg" class="card-img-top position-relative" alt="@item.Description">
+                    <div class="discount-badge">
+                        <span style="color: red; font-size: 18px; position: absolute; top: 10px; right: 10px;">@item.Discount.ToString("P0")</span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Description</h5>
+                        <p class="card-text">
+                            <strong>ID:</strong> @item.Id<br />
+                            <strong>Old price:</strong> <strike>@(item.Price.ToString("C2", System.Globalization.CultureInfo.GetCultureInfo("en-US")))</strike><br />
+                            <strong>New price:</strong> <span style="color:red; font-size: 24px;">@((item.Price * (1 - item.Discount)).ToString("C2", System.Globalization.CultureInfo.GetCultureInfo("en-US")))</span><br />
+                            <strong>Category:</strong> @item.Category.Name<br />
+                            <strong>Brand:</strong> @item.Brand<br />
+                            <strong>Size:</strong> @item.Origin<br />
+                            <strong>Color:</strong> @item.Guarantee<br />
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a class="btn btn-primary" asp-controller="Cart" asp-action="Add" asp-route-id="@item.Id"><i class="bi bi-cart-plus"></i> Add to Cart</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@await Html.PartialAsync("_NavigationButtons2")
+@await Html.PartialAsync("_SortingDialog")
+@await Html.PartialAsync("_SearchingDialog")
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".go").click(function () {
+                //lay value cua page-index
+                var pageIndex = $("#page-index").val();
+                //tao url
+                url = `/?pageIndex=${pageIndex}`
+                //cap nhat href bang url
+                $(this).attr("href", url);
+            });
+        });
+    </script>
+}
+<style>
+    .discount-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+</style>
